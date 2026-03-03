@@ -32,3 +32,4 @@ function e(string $value): string { return htmlspecialchars($value, ENT_QUOTES |
 <form method="post"><input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>"><input name="title" required maxlength="120" placeholder="Add a new item"><select name="category"><?php foreach ($categories as $category): ?><option><?= e($category) ?></option><?php endforeach; ?></select><button>Add</button></form>
 <form method="get"><input name="q" value="<?= e($q) ?>" placeholder="Search"><button>Search</button></form>
 <ul><?php foreach ($entries as $entry): ?><li><span><?= e($entry['title']) ?> <small><?= e($entry['category']) ?></small></span><form method="post"><input type="hidden" name="csrf" value="<?= e($_SESSION['csrf']) ?>"><input type="hidden" name="action" value="delete"><input type="hidden" name="id" value="<?= (int) $entry['id'] ?>"><button>Delete</button></form></li><?php endforeach; ?></ul></main></body></html>
+// minor cleanup
