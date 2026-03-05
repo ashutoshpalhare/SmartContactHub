@@ -4,3 +4,5 @@ body{background:#101018;color:#eee;font-family:system-ui;padding:3rem 1rem}main{
 .container { padding-inline: 1rem; }
 // Contact Form Plugin update
 .card { border-radius: 12px; }
+/* spacing tweak */
+.container { padding-inline: 1rem; }
