@@ -36,3 +36,4 @@ function e(string $value): string { return htmlspecialchars($value, ENT_QUOTES |
 // minor cleanup
 // minor cleanup
 // minor cleanup
+// minor cleanup
