@@ -80,7 +80,8 @@ class SCH_Frontend {
 		self::enqueue_assets();
 
 		$settings = sch_get_settings();
-		$uid      = wp_unique_id( 'sch-' );
+		$uid       = wp_unique_id( 'sch-' );
+		$status_id = $uid . '-status';
 
 		ob_start();
 		?>
@@ -88,17 +89,17 @@ class SCH_Frontend {
 			<div class="sch-card">
 				<div class="sch-form-panel">
 					<h2 class="sch-title"><?php echo esc_html( $settings['form_title'] ); ?></h2>
-					<form class="sch-form" method="post" novalidate>
+					<form class="sch-form" method="post" aria-describedby="<?php echo esc_attr( $status_id ); ?>" novalidate>
 						<input type="hidden" name="action" value="<?php echo esc_attr( self::AJAX_ACTION ); ?>">
 						<?php echo wp_nonce_field( self::AJAX_ACTION, self::NONCE_NAME, true, false ); ?>
 						<div class="sch-grid">
 							<div class="sch-field">
 								<label for="<?php echo esc_attr( $uid ); ?>-name"><?php esc_html_e( 'Name', 'smart-contact-hub' ); ?> <span class="sch-required" aria-hidden="true">*</span></label>
-								<input id="<?php echo esc_attr( $uid ); ?>-name" name="name" type="text" autocomplete="name" maxlength="120" required>
+								<input id="<?php echo esc_attr( $uid ); ?>-name" name="name" type="text" autocomplete="name" maxlength="120" aria-required="true" required>
 							</div>
 							<div class="sch-field">
 								<label for="<?php echo esc_attr( $uid ); ?>-email"><?php esc_html_e( 'Email', 'smart-contact-hub' ); ?> <span class="sch-required" aria-hidden="true">*</span></label>
-								<input id="<?php echo esc_attr( $uid ); ?>-email" name="email" type="email" autocomplete="email" maxlength="190" required>
+								<input id="<?php echo esc_attr( $uid ); ?>-email" name="email" type="email" autocomplete="email" maxlength="190" aria-required="true" required>
 							</div>
 							<div class="sch-field">
 								<label for="<?php echo esc_attr( $uid ); ?>-phone"><?php esc_html_e( 'Phone', 'smart-contact-hub' ); ?></label>
@@ -106,18 +107,19 @@ class SCH_Frontend {
 							</div>
 							<div class="sch-field">
 								<label for="<?php echo esc_attr( $uid ); ?>-subject"><?php esc_html_e( 'Subject', 'smart-contact-hub' ); ?> <span class="sch-required" aria-hidden="true">*</span></label>
-								<input id="<?php echo esc_attr( $uid ); ?>-subject" name="subject" type="text" maxlength="160" required>
+								<input id="<?php echo esc_attr( $uid ); ?>-subject" name="subject" type="text" maxlength="160" aria-required="true" required>
 							</div>
 							<div class="sch-field sch-field--full">
 								<label for="<?php echo esc_attr( $uid ); ?>-message"><?php esc_html_e( 'Message', 'smart-contact-hub' ); ?> <span class="sch-required" aria-hidden="true">*</span></label>
-								<textarea id="<?php echo esc_attr( $uid ); ?>-message" name="message" rows="6" maxlength="5000" required></textarea>
+								<textarea id="<?php echo esc_attr( $uid ); ?>-message" name="message" rows="6" maxlength="5000" aria-required="true" required></textarea>
+								<small class="sch-character-count" aria-live="polite">0 / 5000</small>
 							</div>
 							<div class="sch-field sch-field--trap" aria-hidden="true">
 								<label for="<?php echo esc_attr( $uid ); ?>-website"><?php esc_html_e( 'Leave this field empty', 'smart-contact-hub' ); ?></label>
 								<input id="<?php echo esc_attr( $uid ); ?>-website" name="<?php echo esc_attr( self::HONEYPOT ); ?>" type="text" tabindex="-1" autocomplete="off">
 							</div>
 						</div>
-						<p class="sch-status" role="status" aria-live="polite" aria-atomic="true" hidden></p>
+						<p id="<?php echo esc_attr( $status_id ); ?>" class="sch-status" role="status" aria-live="polite" aria-atomic="true" hidden></p>
 						<button class="sch-submit" type="submit"><span class="sch-submit-text"><?php esc_html_e( 'Send Message', 'smart-contact-hub' ); ?></span></button>
 					</form>
 				</div>
