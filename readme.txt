@@ -4,81 +4,70 @@ Tags: contact form, contact, email, whatsapp, shortcode
 Requires at least: 5.8
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-
-A clean, modern AJAX contact form with email notifications, an optional WhatsApp redirect, and honeypot spam protection.
-
+A responsive WordPress contact form with AJAX email delivery, optional WhatsApp follow-up, and lightweight anti-spam controls.
 
 == Description ==
 
+Smart Contact Hub adds a configurable contact form with the [smart_contact_hub] shortcode.
 
-Smart Contact Hub adds a responsive contact form to your site with a single shortcode.
-
-
-* Place the form anywhere with `[smart_contact_hub]`.
-* Submissions are sent with no page reload, with a loading state and clear success or error messages.
-* Messages are emailed to the address you choose, with the visitor set as the reply-to address.
-* Optionally show a "Continue on WhatsApp" button after a successful submission, with the visitor's message pre-filled.
-* Basic spam protection using a hidden honeypot field.
-* Nonces, input sanitization, and output escaping throughout.
-* No external CSS frameworks and no external requests. Styles and scripts load only on pages that use the shortcode.
-
+* AJAX submission with accessible loading, error, and success states.
+* Email notifications through WordPress wp_mail().
+* Optional WhatsApp follow-up link after successful email delivery.
+* Settings page under Settings > Smart Contact Hub.
+* Nonce verification, a honeypot field, and a short submission cooldown.
+* Server-side sanitization, validation, length limits, and safe email headers.
+* Responsive, scoped frontend styling with no external runtime dependencies.
+* Contact submissions are not stored in the WordPress database by this plugin.
 
 == Installation ==
 
-
-1. Upload the `smart-contact-hub` folder to the `/wp-content/plugins/` directory, or install the plugin zip through the Plugins screen in WordPress.
-2. Activate the plugin through the Plugins screen.
-3. Go to Settings > Smart Contact Hub and configure the recipient email, success message, WhatsApp options, and form title.
-4. Add `[smart_contact_hub]` to any page or post.
-
+1. Upload the smart-contact-hub directory to /wp-content/plugins/.
+2. Activate Smart Contact Hub from the Plugins screen.
+3. Open Settings > Smart Contact Hub and configure the recipient and form options.
+4. Add [smart_contact_hub] to a page or post.
 
 == Frequently Asked Questions ==
 
-
 = Where are messages sent? =
 
+Messages are sent to the Recipient Email configured under Settings > Smart Contact Hub. It defaults to the WordPress admin email.
 
-To the Recipient Email set under Settings > Smart Contact Hub. It defaults to the site admin email.
+= How do I enable WhatsApp follow-up? =
 
+Enter the international number with country code and digits only (8 to 15 digits), enable the WhatsApp button, and save. A follow-up link appears after email delivery succeeds. Visitors choose whether to open it.
 
-= How do I enable the WhatsApp button? =
+= Does the plugin store submissions? =
 
+No. The plugin sends submissions through wp_mail() and does not save them as WordPress records. A short transient is used for submission cooldown; its key is an HMAC of the remote address.
 
-Enter your WhatsApp number with the country code and digits only (for example 919876543210), set "Enable WhatsApp Button" to Yes, and save. After a visitor submits the form, a button opens WhatsApp with their message pre-filled.
+= Why are messages not arriving? =
 
-
-= Does the plugin store submissions in the database? =
-
-
-No. Submissions are emailed using wp_mail(). Use a reliable mail delivery plugin (SMTP) if your host does not deliver mail well.
-
+Check the recipient address and hosting mail configuration. Configure a reliable SMTP provider for production and verify inbox delivery.
 
 = Is the form protected against spam? =
 
-
-It includes a hidden honeypot field that catches most simple bots. For heavier spam, combine it with a CAPTCHA or anti-spam service.
-
+The plugin includes nonce verification, a hidden honeypot, and a short per-network cooldown. These are basic controls and may need to be supplemented on high-volume sites.
 
 == Changelog ==
 
+= 1.1.0 =
+* Restored complete frontend and admin settings implementations.
+* Added server-side validation, field length limits, and submission cooldown.
+* Hardened recipient validation and email headers.
+* Added a multibyte-safe compatibility helper that does not require mbstring.
+* Improved responsive styling, accessibility, and AJAX error handling.
+* Added live message length feedback and developer quality tooling.
 
 = 1.0.0 =
-* Initial release.
-* Contact form shortcode with Name, Email, Phone, Subject, and Message fields.
-* AJAX submission with loading and feedback states.
-* Email notifications through wp_mail().
-* Optional WhatsApp redirect after success.
-* Admin settings page under Settings > Smart Contact Hub.
-* Honeypot spam protection.
-
+* Initial contact form shortcode and settings page.
+* AJAX submission and email notifications.
+* Optional WhatsApp follow-up and honeypot protection.
 
 == Upgrade Notice ==
 
-
-= 1.0.0 =
-First release of Smart Contact Hub.
-
+= 1.1.0 =
+Includes restored form functionality, improved validation, and frontend accessibility updates.
