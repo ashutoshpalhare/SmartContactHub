@@ -256,6 +256,27 @@ class SCH_Admin {
 				submit_button( __( 'Save Settings', 'smart-contact-hub' ) );
 				?>
 			</form>
+
+			<hr>
+			<h2><?php esc_html_e( 'Quick Setup', 'smart-contact-hub' ); ?></h2>
+			<p><?php esc_html_e( 'Add the shortcode below to any page or post where you want the contact form to appear.', 'smart-contact-hub' ); ?></p>
+			<p><code>[smart_contact_hub]</code></p>
+			<table class="widefat striped" style="max-width: 680px;">
+				<tbody>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Plugin Version', 'smart-contact-hub' ); ?></th>
+						<td><?php echo esc_html( SCH_VERSION ); ?></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Message Recipient', 'smart-contact-hub' ); ?></th>
+						<td><?php echo esc_html( sch_get_settings()['recipient_email'] ); ?></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'WhatsApp Follow-up', 'smart-contact-hub' ); ?></th>
+						<td><?php echo 'yes' === sch_get_settings()['enable_whatsapp'] ? esc_html__( 'Enabled', 'smart-contact-hub' ) : esc_html__( 'Disabled', 'smart-contact-hub' ); ?></td>
+					</tr>
+				</tbody>
+			</table>
 		</div>
 		<?php
 	}
