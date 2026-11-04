@@ -1,0 +1,27 @@
+{
+  "name": "ashutoshpalhare/smart-contact-hub",
+  "description": "A lightweight WordPress contact form plugin with AJAX delivery and optional WhatsApp follow-up.",
+  "type": "wordpress-plugin",
+  "license": "GPL-2.0-or-later",
+  "require": {
+    "php": ">=7.4"
+  },
+  "require-dev": {
+    "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+    "phpcompatibility/php-compatibility": "^9.3",
+    "wp-coding-standards/wpcs": "^3.1"
+  },
+  "scripts": {
+    "lint": "find . -path ./vendor -prune -o -name '*.php' -print0 | xargs -0 -n1 php -l",
+    "cs": "phpcs",
+    "cs:fix": "phpcbf"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    },
+    "sort-packages": true
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
+}
