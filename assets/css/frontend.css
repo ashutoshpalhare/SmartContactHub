@@ -1,35 +1,29 @@
 /**
- * Smart Contact Hub - frontend styles.
- * Scoped to .sch-form-wrap so the form does not inherit or leak theme styles.
+ * Smart Contact Hub - scoped, responsive frontend design.
+ * All selectors are contained within the plugin wrapper.
  */
-
-
 .sch-form-wrap {
-	--sch-primary: #2563eb;
-	--sch-primary-hover: #1d4ed8;
-	--sch-primary-soft: #dbeafe;
-	--sch-success: #15803d;
-	--sch-success-soft: #dcfce7;
-	--sch-error-text: #991b1b;
-	--sch-error-soft: #fee2e2;
-	--sch-text: #0f172a;
-	--sch-text-muted: #475569;
-	--sch-border: #cbd5e1;
-	--sch-border-subtle: #e2e8f0;
+	--sch-primary: #ea580c;
+	--sch-primary-hover: #c2410c;
+	--sch-primary-soft: #fff7ed;
+	--sch-success: #166534;
+	--sch-success-soft: #f0fdf4;
+	--sch-error: #991b1b;
+	--sch-error-soft: #fef2f2;
+	--sch-text: #171717;
+	--sch-muted: #525252;
+	--sch-border: #d4d4d4;
 	--sch-surface: #ffffff;
-	--sch-radius: 12px;
-	--sch-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
-
+	--sch-focus: rgba(234, 88, 12, 0.22);
+	--sch-radius: 16px;
 	width: 100%;
-	max-width: 680px;
-	margin: 32px auto;
-	font-family: var(--sch-font);
-	font-size: 16px;
-	line-height: 1.5;
+	max-width: 720px;
+	margin: 2rem auto;
 	color: var(--sch-text);
+	font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+	font-size: 16px;
+	line-height: 1.55;
 }
-
 
 .sch-form-wrap *,
 .sch-form-wrap *::before,
@@ -37,50 +31,215 @@
 	box-sizing: border-box;
 }
 
-
 .sch-form-wrap [hidden] {
 	display: none !important;
 }
 
-
 .sch-card {
+	overflow: hidden;
+	padding: clamp(1.25rem, 4vw, 2.25rem);
+	border: 1px solid var(--sch-border);
+	border-radius: var(--sch-radius);
 	background: var(--sch-surface);
-	border: 1px solid var(--sch-border-subtle);
-	border-radius: 16px;
-	padding: 32px;
-	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+	box-shadow: 0 12px 36px rgba(23, 23, 23, 0.08);
 }
-
 
 .sch-title {
-	margin: 0 0 24px;
-	font-size: 1.5rem;
-	font-weight: 600;
-	line-height: 1.2;
+	margin: 0 0 1.5rem;
 	color: var(--sch-text);
+	font-size: clamp(1.4rem, 3vw, 1.8rem);
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	line-height: 1.2;
 }
-
 
 .sch-grid {
 	display: grid;
-	grid-template-columns: 1fr;
-	gap: 16px;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1.15rem;
 }
-
 
 .sch-field {
 	display: flex;
+	min-width: 0;
 	flex-direction: column;
-	gap: 8px;
+	gap: 0.45rem;
 }
-
 
 .sch-field--full {
 	grid-column: 1 / -1;
 }
 
-
 .sch-field label {
-	font-size: 0.9rem;
-	font-weight: 500;
 	color: var(--sch-text);
+	font-size: 0.92rem;
+	font-weight: 600;
+}
+
+.sch-required {
+	color: var(--sch-error);
+}
+
+.sch-field input,
+.sch-field textarea {
+	display: block;
+	width: 100%;
+	min-height: 48px;
+	padding: 0.75rem 0.9rem;
+	border: 1px solid var(--sch-border);
+	border-radius: 10px;
+	outline: none;
+	background: #fff;
+	color: #171717;
+	font: inherit;
+	transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.sch-field textarea {
+	min-height: 140px;
+	resize: vertical;
+}
+
+.sch-field input::placeholder,
+.sch-field textarea::placeholder {
+	color: #737373;
+}
+
+.sch-field input:focus,
+.sch-field textarea:focus {
+	border-color: var(--sch-primary);
+	box-shadow: 0 0 0 4px var(--sch-focus);
+}
+
+.sch-submit,
+.sch-reset,
+.sch-whatsapp {
+	display: inline-flex;
+	min-height: 46px;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem;
+	margin-top: 1.25rem;
+	padding: 0.7rem 1.2rem;
+	border: 1px solid transparent;
+	border-radius: 10px;
+	font: inherit;
+	font-weight: 650;
+	line-height: 1.2;
+	text-align: center;
+	text-decoration: none;
+	cursor: pointer;
+	transition: background-color 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.sch-submit {
+	width: 100%;
+	background: var(--sch-primary);
+	color: #fff;
+}
+
+.sch-submit:hover:not(:disabled) {
+	background: var(--sch-primary-hover);
+}
+
+.sch-submit:disabled {
+	cursor: wait;
+	opacity: 0.72;
+}
+
+.sch-reset {
+	border-color: var(--sch-border);
+	background: transparent;
+	color: var(--sch-text);
+}
+
+.sch-reset:hover {
+	background: #f5f5f5;
+}
+
+.sch-whatsapp {
+	margin-right: 0.5rem;
+	background: #15803d;
+	color: #fff;
+}
+
+.sch-whatsapp:hover {
+	background: #166534;
+	color: #fff;
+}
+
+.sch-status {
+	margin: 1rem 0 0;
+	padding: 0.8rem 1rem;
+	border-radius: 10px;
+	font-size: 0.92rem;
+}
+
+.sch-status--error {
+	background: var(--sch-error-soft);
+	color: var(--sch-error);
+}
+
+.sch-success {
+	padding: 0.5rem 0;
+}
+
+.sch-success:focus {
+	outline: 3px solid var(--sch-focus);
+	outline-offset: 5px;
+}
+
+.sch-success-text {
+	margin: 0;
+	padding: 1rem;
+	border-radius: 10px;
+	background: var(--sch-success-soft);
+	color: var(--sch-success);
+	font-weight: 600;
+}
+
+.sch-field--trap {
+	position: absolute !important;
+	left: -10000px !important;
+	width: 1px !important;
+	height: 1px !important;
+	overflow: hidden !important;
+}
+
+.sch-form-wrap button:focus-visible,
+.sch-form-wrap a:focus-visible {
+	outline: 3px solid var(--sch-focus);
+	outline-offset: 3px;
+}
+
+@media (max-width: 560px) {
+	.sch-form-wrap {
+		margin: 1.25rem auto;
+	}
+
+	.sch-grid {
+		grid-template-columns: 1fr;
+		gap: 1rem;
+	}
+
+	.sch-field--full {
+		grid-column: auto;
+	}
+
+	.sch-reset,
+	.sch-whatsapp {
+		width: 100%;
+		margin-right: 0;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sch-form-wrap *,
+	.sch-form-wrap *::before,
+	.sch-form-wrap *::after {
+		scroll-behavior: auto !important;
+		transition-duration: 0.01ms !important;
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}
