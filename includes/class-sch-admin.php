@@ -185,41 +185,57 @@ class SCH_Admin {
 	 */
 	public static function sanitize_settings( $input ) {
 		$defaults = sch_get_default_settings();
+
 		if ( ! is_array( $input ) ) {
 			return $defaults;
 		}
 
-		$settings = array();
-		$settings['recipient_email'] = isset( $input['recipient_email'] )
+		$recipient = isset( $input['recipient_email'] ) && is_string( $input['recipient_email'] )
 			? sanitize_email( $input['recipient_email'] )
 			: $defaults['recipient_email'];
-		$settings['form_title'] = isset( $input['form_title'] )
+		$title = isset( $input['form_title'] ) && is_string( $input['form_title'] )
 			? sanitize_text_field( $input['form_title'] )
 			: $defaults['form_title'];
-		$settings['success_message'] = isset( $input['success_message'] )
+		$message = isset( $input['success_message'] ) && is_string( $input['success_message'] )
 			? sanitize_textarea_field( $input['success_message'] )
 			: $defaults['success_message'];
-		$settings['whatsapp_number'] = isset( $input['whatsapp_number'] )
+		$number = isset( $input['whatsapp_number'] ) && is_string( $input['whatsapp_number'] )
 			? preg_replace( '/\D+/', '', sanitize_text_field( $input['whatsapp_number'] ) )
 			: '';
-		$settings['enable_whatsapp'] = isset( $input['enable_whatsapp'] ) && 'yes' === $input['enable_whatsapp']
-			? 'yes'
-			: 'no';
 
-		if ( ! is_email( $settings['recipient_email'] ) ) {
-			add_settings_error( SCH_OPTION_NAME, 'sch_invalid_recipient', __( 'Enter a valid recipient email address.', 'smart-contact-hub' ) );
-			$settings['recipient_email'] = $defaults['recipient_email'];
+		if ( ! is_email( $recipient ) || SCH_Compat::text_length( $recipient ) > 190 ) {
+			add_settings_error( SCH_OPTION_NAME, 'sch_invalid_recipient', __( 'Enter a valid recipient email address (maximum 190 characters).', 'smart-contact-hub' ) );
+			$recipient = $defaults['recipient_email'];
 		}
 
-		if ( '' === $settings['form_title'] ) {
-			$settings['form_title'] = $defaults['form_title'];
+		$title = SCH_Compat::text_substr( trim( $title ), 0, 80 );
+		if ( '' === $title ) {
+			$title = $defaults['form_title'];
 		}
 
-		if ( '' === $settings['success_message'] ) {
-			$settings['success_message'] = $defaults['success_message'];
+		$message = SCH_Compat::text_substr( trim( $message ), 0, 240 );
+		if ( '' === $message ) {
+			$message = $defaults['success_message'];
 		}
 
-		return $settings;
+		if ( '' !== $number && ( SCH_Compat::text_length( $number ) < 8 || SCH_Compat::text_length( $number ) > 15 ) ) {
+			add_settings_error( SCH_OPTION_NAME, 'sch_invalid_whatsapp', __( 'WhatsApp numbers must contain 8 to 15 digits, including the country code.', 'smart-contact-hub' ) );
+			$number = '';
+		}
+
+		$enabled = isset( $input['enable_whatsapp'] ) && 'yes' === $input['enable_whatsapp'] ? 'yes' : 'no';
+		if ( 'yes' === $enabled && '' === $number ) {
+			add_settings_error( SCH_OPTION_NAME, 'sch_whatsapp_missing', __( 'Add a valid WhatsApp number before enabling the WhatsApp button.', 'smart-contact-hub' ) );
+			$enabled = 'no';
+		}
+
+		return array(
+			'recipient_email' => $recipient,
+			'form_title'      => $title,
+			'success_message' => $message,
+			'whatsapp_number' => $number,
+			'enable_whatsapp' => $enabled,
+		);
 	}
 
 	/**
