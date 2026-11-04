@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<ruleset name="Smart Contact Hub">
+  <description>Code quality rules for Smart Contact Hub.</description>
+
+  <file>.</file>
+  <exclude-pattern>/vendor/*</exclude-pattern>
+  <exclude-pattern>/.git/*</exclude-pattern>
+
+  <arg name="basepath" value="."/>
+  <arg name="colors"/>
+  <arg name="extensions" value="php"/>
+  <arg value="sp"/>
+
+  <config name="minimum_supported_wp_version" value="5.8"/>
+  <config name="testVersion" value="7.4-"/>
+
+  <rule ref="WordPress"/>
+  <rule ref="PHPCompatibilityWP"/>
+</ruleset>
