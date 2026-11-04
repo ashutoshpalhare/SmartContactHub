@@ -1,0 +1,86 @@
+/**
+ * Smart Contact Hub - frontend styles.
+ * Scoped to .sch-form-wrap so the form does not inherit or leak theme styles.
+ */
+
+
+.sch-form-wrap {
+	--sch-primary: #2563eb;
+	--sch-primary-hover: #1d4ed8;
+	--sch-primary-soft: #dbeafe;
+	--sch-success: #15803d;
+	--sch-success-soft: #dcfce7;
+	--sch-error-text: #991b1b;
+	--sch-error-soft: #fee2e2;
+	--sch-text: #0f172a;
+	--sch-text-muted: #475569;
+	--sch-border: #cbd5e1;
+	--sch-border-subtle: #e2e8f0;
+	--sch-surface: #ffffff;
+	--sch-radius: 12px;
+	--sch-font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+
+	width: 100%;
+	max-width: 680px;
+	margin: 32px auto;
+	font-family: var(--sch-font);
+	font-size: 16px;
+	line-height: 1.5;
+	color: var(--sch-text);
+}
+
+
+.sch-form-wrap *,
+.sch-form-wrap *::before,
+.sch-form-wrap *::after {
+	box-sizing: border-box;
+}
+
+
+.sch-form-wrap [hidden] {
+	display: none !important;
+}
+
+
+.sch-card {
+	background: var(--sch-surface);
+	border: 1px solid var(--sch-border-subtle);
+	border-radius: 16px;
+	padding: 32px;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04), 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+
+.sch-title {
+	margin: 0 0 24px;
+	font-size: 1.5rem;
+	font-weight: 600;
+	line-height: 1.2;
+	color: var(--sch-text);
+}
+
+
+.sch-grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 16px;
+}
+
+
+.sch-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+}
+
+
+.sch-field--full {
+	grid-column: 1 / -1;
+}
+
+
+.sch-field label {
+	font-size: 0.9rem;
+	font-weight: 500;
+	color: var(--sch-text);
