@@ -85,6 +85,19 @@
 			return;
 		}
 
+		var messageField = refs.form.querySelector('textarea[name="message"]');
+		if (messageField) {
+			var counter = refs.form.querySelector('.sch-character-count');
+			var maxLength = parseInt(messageField.getAttribute('maxlength'), 10) || 5000;
+			var updateCounter = function () {
+				if (counter) {
+					counter.textContent = messageField.value.length + ' / ' + maxLength;
+				}
+			};
+			messageField.addEventListener('input', updateCounter);
+			updateCounter();
+		}
+
 		var buttonLabel = refs.submitBtn.querySelector('.sch-submit-text');
 		buttonLabel = buttonLabel ? buttonLabel.textContent : 'Send Message';
 
