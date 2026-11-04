@@ -1,0 +1,46 @@
+name: Quality Checks
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: PHP ${{ matrix.php }} / JavaScript
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        php: ['7.4', '8.3']
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+
+      - name: Check PHP syntax
+        run: |
+          find . -type f -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+      - name: Check UTF-8 compatibility helpers
+        run: |
+          php -r 'define("ABSPATH", __DIR__ . "/"); require "includes/class-sch-compat.php"; $value = "A😀B"; if (SCH_Compat::text_length($value) !== 3 || SCH_Compat::text_substr($value, 1, 1) !== "😀") { fwrite(STDERR, "UTF-8 compatibility check failed\n"); exit(1); } echo "UTF-8 compatibility checks passed\n";'
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Check frontend JavaScript syntax
+        run: node --check assets/js/frontend.js
