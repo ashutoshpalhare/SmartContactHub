@@ -197,39 +197,7 @@ class SCH_Frontend {
 	 * @return array|WP_Error
 	 */
 	private static function get_submission_data() {
-		$raw = wp_unslash( $_POST );
-
-		$data = array(
-			'name'    => isset( $raw['name'] ) ? sanitize_text_field( $raw['name'] ) : '',
-			'email'   => isset( $raw['email'] ) ? sanitize_email( $raw['email'] ) : '',
-			'phone'   => isset( $raw['phone'] ) ? sanitize_text_field( $raw['phone'] ) : '',
-			'subject' => isset( $raw['subject'] ) ? sanitize_text_field( $raw['subject'] ) : '',
-			'message' => isset( $raw['message'] ) ? sanitize_textarea_field( $raw['message'] ) : '',
-		);
-
-		if ( '' === $data['name'] || '' === $data['email'] || '' === $data['subject'] || '' === $data['message'] ) {
-			return new WP_Error( 'sch_required_fields', __( 'Please complete all required fields.', 'smart-contact-hub' ) );
-		}
-
-		if ( ! is_email( $data['email'] ) ) {
-			return new WP_Error( 'sch_invalid_email', __( 'Enter a valid email address.', 'smart-contact-hub' ) );
-		}
-
-		$limits = array(
-			'name'    => 120,
-			'email'   => 190,
-			'phone'   => 40,
-			'subject' => 160,
-			'message' => 5000,
-		);
-
-		foreach ( $limits as $field => $limit ) {
-			if ( SCH_Compat::text_length( $data[ $field ] ) > $limit ) {
-				return new WP_Error( 'sch_field_too_long', __( 'One or more fields exceed the allowed length.', 'smart-contact-hub' ) );
-			}
-		}
-
-		return $data;
+		return SCH_Submission_Validator::validate( wp_unslash( $_POST ) );
 	}
 
 	/**
