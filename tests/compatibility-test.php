@@ -109,7 +109,7 @@ $tests = array(
 				'email'   => 'ashutosh@example.com',
 				'phone'   => '+91 98765 43210',
 				'subject' => '  Project enquiry  ',
-				'message' => "Hello\\nWorld",
+				'message' => "Hello\nWorld",
 			)
 		);
 
@@ -118,7 +118,7 @@ $tests = array(
 			'email'   => 'ashutosh@example.com',
 			'phone'   => '+91 98765 43210',
 			'subject' => 'Project enquiry',
-			'message' => "Hello\\nWorld",
+			'message' => "Hello\nWorld",
 		), $result, 'Valid submission normalization.' );
 	},
 	'rejects missing required fields' => function () {
