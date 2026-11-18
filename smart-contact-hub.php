@@ -25,6 +25,7 @@ define( 'SCH_OPTION_NAME', 'sch_settings' );
 
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-compat.php';
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-validator.php';
+require_once SCH_PLUGIN_DIR . 'includes/class-sch-request-guard.php';
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-email.php';
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-admin.php';
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-frontend.php';

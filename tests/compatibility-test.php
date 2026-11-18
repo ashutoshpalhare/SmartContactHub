@@ -52,6 +52,7 @@ function is_email( $value ) {
 }
 
 require_once dirname( __DIR__ ) . '/includes/class-sch-validator.php';
+require_once dirname( __DIR__ ) . '/includes/class-sch-request-guard.php';
 
 
 /**
@@ -217,6 +218,23 @@ $tests = array(
 			)
 		);
 		sch_test_assert_same( 'sch_invalid_phone', $result->get_error_code(), 'Phone maximum digit count.' );
+	},
+	'treats a non-empty honeypot as a bot submission' => function () {
+		sch_test_assert_same( true, SCH_Request_Guard::is_honeypot_filled( 'https://spam.example' ), 'Filled honeypot.' );
+	},
+	'accepts an empty honeypot value' => function () {
+		sch_test_assert_same( false, SCH_Request_Guard::is_honeypot_filled( '' ), 'Empty honeypot.' );
+	},
+	'classifies array and object honeypot values as traps without sanitizing them' => function () {
+		sch_test_assert_same( true, SCH_Request_Guard::is_honeypot_filled( array( 'unexpected' ) ), 'Array honeypot.' );
+		sch_test_assert_same( true, SCH_Request_Guard::is_honeypot_filled( (object) array( 'unexpected' ) ), 'Object honeypot.' );
+	},
+	'uses a safe fallback for malformed remote address values' => function () {
+		sch_test_assert_same( 'unknown', SCH_Request_Guard::get_remote_address( array( 'REMOTE_ADDR' => array( 'unexpected' ) ) ), 'Array remote address.' );
+		sch_test_assert_same( 'unknown', SCH_Request_Guard::get_remote_address( array() ), 'Missing remote address.' );
+	},
+	'sanitizes scalar remote addresses' => function () {
+		sch_test_assert_same( '127.0.0.1', SCH_Request_Guard::get_remote_address( array( 'REMOTE_ADDR' => '127.0.0.1' ) ), 'Scalar remote address.' );
 	},
 	'runs with mbstring disabled' => function () {
 		sch_test_assert_same( false, extension_loaded( 'mbstring' ), 'The test process must disable mbstring.' );

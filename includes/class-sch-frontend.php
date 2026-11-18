@@ -145,11 +145,11 @@ class SCH_Frontend {
 			);
 		}
 
-		$honeypot = isset( $_POST[ self::HONEYPOT ] )
-			? sanitize_text_field( wp_unslash( $_POST[ self::HONEYPOT ] ) )
+		$honeypot_value = isset( $_POST[ self::HONEYPOT ] )
+			? wp_unslash( $_POST[ self::HONEYPOT ] )
 			: '';
 
-		if ( '' !== $honeypot ) {
+		if ( SCH_Request_Guard::is_honeypot_filled( $honeypot_value ) ) {
 			wp_send_json_success( array( 'message' => sch_get_settings()['success_message'] ) );
 		}
 
@@ -206,9 +206,7 @@ class SCH_Frontend {
 	 * @return bool
 	 */
 	private static function is_rate_limited() {
-		$remote_address = isset( $_SERVER['REMOTE_ADDR'] )
-			? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) )
-			: 'unknown';
+		$remote_address = SCH_Request_Guard::get_remote_address( wp_unslash( $_SERVER ) );
 		$key = 'sch_rate_' . hash_hmac( 'sha256', $remote_address, wp_salt( 'auth' ) );
 
 		if ( get_transient( $key ) ) {
