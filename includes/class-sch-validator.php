@@ -36,6 +36,10 @@ class SCH_Submission_Validator {
 			return new WP_Error( 'sch_invalid_email', __( 'Enter a valid email address.', 'smart-contact-hub' ) );
 		}
 
+		if ( ! self::is_valid_phone( $data['phone'] ) ) {
+			return new WP_Error( 'sch_invalid_phone', __( 'Enter a valid phone number or leave the field empty.', 'smart-contact-hub' ) );
+		}
+
 		$limits = array(
 			'name'    => 120,
 			'email'   => 190,
@@ -51,6 +55,26 @@ class SCH_Submission_Validator {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Validate optional phone numbers without assuming a country-specific format.
+	 *
+	 * @param string $phone Sanitized phone value.
+	 * @return bool
+	 */
+	private static function is_valid_phone( $phone ) {
+		if ( '' === $phone ) {
+			return true;
+		}
+
+		if ( ! preg_match( '/^\\+?[0-9\\s().-]+$/', $phone ) ) {
+			return false;
+		}
+
+		$digit_count = preg_match_all( '/[0-9]/', $phone );
+
+		return $digit_count >= 7 && $digit_count <= 20;
 	}
 
 	/**

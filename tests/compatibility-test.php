@@ -158,6 +158,66 @@ $tests = array(
 		);
 		sch_test_assert_same( 'sch_required_fields', $result->get_error_code(), 'Array input handling.' );
 	},
+	'accepts an empty optional phone number' => function () {
+		$result = SCH_Submission_Validator::validate(
+			array(
+				'name' => 'Ashutosh',
+				'email' => 'ashutosh@example.com',
+				'phone' => '',
+				'subject' => 'Hello',
+				'message' => 'Message',
+			)
+		);
+		sch_test_assert_same( true, is_array( $result ), 'Empty optional phone.' );
+	},
+	'accepts an international phone number with common formatting' => function () {
+		$result = SCH_Submission_Validator::validate(
+			array(
+				'name' => 'Ashutosh',
+				'email' => 'ashutosh@example.com',
+				'phone' => '+91 (98765) 43210',
+				'subject' => 'Hello',
+				'message' => 'Message',
+			)
+		);
+		sch_test_assert_same( '+91 (98765) 43210', $result['phone'], 'Formatted phone number.' );
+	},
+	'rejects phone numbers containing letters' => function () {
+		$result = SCH_Submission_Validator::validate(
+			array(
+				'name' => 'Ashutosh',
+				'email' => 'ashutosh@example.com',
+				'phone' => '98765ABCDE',
+				'subject' => 'Hello',
+				'message' => 'Message',
+			)
+		);
+		sch_test_assert_same( 'sch_invalid_phone', $result->get_error_code(), 'Phone alphabet rejection.' );
+	},
+	'rejects phone numbers with too few digits' => function () {
+		$result = SCH_Submission_Validator::validate(
+			array(
+				'name' => 'Ashutosh',
+				'email' => 'ashutosh@example.com',
+				'phone' => '123-456',
+				'subject' => 'Hello',
+				'message' => 'Message',
+			)
+		);
+		sch_test_assert_same( 'sch_invalid_phone', $result->get_error_code(), 'Phone minimum digit count.' );
+	},
+	'rejects phone numbers with more than twenty digits' => function () {
+		$result = SCH_Submission_Validator::validate(
+			array(
+				'name' => 'Ashutosh',
+				'email' => 'ashutosh@example.com',
+				'phone' => '123456789012345678901',
+				'subject' => 'Hello',
+				'message' => 'Message',
+			)
+		);
+		sch_test_assert_same( 'sch_invalid_phone', $result->get_error_code(), 'Phone maximum digit count.' );
+	},
 	'runs with mbstring disabled' => function () {
 		sch_test_assert_same( false, extension_loaded( 'mbstring' ), 'The test process must disable mbstring.' );
 	},
