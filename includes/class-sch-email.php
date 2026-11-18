@@ -19,8 +19,8 @@ class SCH_Email {
 	 * @return bool
 	 */
 	public static function send_contact_email( array $data, array $settings ) {
-		$recipient = isset( $settings['recipient_email'] )
-			? sanitize_email( $settings['recipient_email'] )
+		$recipient = isset( $settings['recipient_email'] ) && is_scalar( $settings['recipient_email'] )
+			? sanitize_email( (string) $settings['recipient_email'] )
 			: '';
 
 		if ( ! is_email( $recipient ) ) {

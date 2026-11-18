@@ -51,8 +51,33 @@ function is_email( $value ) {
 	return false !== filter_var( $value, FILTER_VALIDATE_EMAIL );
 }
 
+$GLOBALS['sch_test_mail'] = null;
+
+function get_bloginfo( $show ) {
+	return 'Smart Contact Hub';
+}
+
+function wp_specialchars_decode( $value, $quote_style = ENT_NOQUOTES ) {
+	return html_entity_decode( $value, $quote_style );
+}
+
+function current_time( $type ) {
+	return '2026-11-18 12:00:00';
+}
+
+function wp_mail( $to, $subject, $message, $headers = array() ) {
+	$GLOBALS['sch_test_mail'] = array(
+		'to'      => $to,
+		'subject' => $subject,
+		'message' => $message,
+		'headers' => $headers,
+	);
+	return true;
+}
+
 require_once dirname( __DIR__ ) . '/includes/class-sch-validator.php';
 require_once dirname( __DIR__ ) . '/includes/class-sch-request-guard.php';
+require_once dirname( __DIR__ ) . '/includes/class-sch-email.php';
 
 
 /**
@@ -252,6 +277,31 @@ $tests = array(
 	'accepts POST request methods case-insensitively' => function () {
 		sch_test_assert_same( true, SCH_Request_Guard::is_post_request( array( 'REQUEST_METHOD' => 'POST' ) ), 'POST request method.' );
 		sch_test_assert_same( true, SCH_Request_Guard::is_post_request( array( 'REQUEST_METHOD' => 'post' ) ), 'Lowercase POST request method.' );
+	},
+	'rejects malformed recipient settings before calling wp_mail' => function () {
+		$GLOBALS['sch_test_mail'] = null;
+		$result = SCH_Email::send_contact_email( array(), array( 'recipient_email' => array( 'bad@example.com' ) ) );
+		sch_test_assert_same( false, $result, 'Array recipient setting.' );
+		sch_test_assert_same( null, $GLOBALS['sch_test_mail'], 'Mail must not be attempted for malformed recipient settings.' );
+	},
+	'sends a plain-text email with a validated Reply-To header' => function () {
+		$GLOBALS['sch_test_mail'] = null;
+		$data = array(
+			'name'    => "Ashutosh\\r\\nBcc: attacker@example.com",
+			'email'   => 'visitor@example.com',
+			'phone'   => '',
+			'subject' => "Project\\r\\nBcc: attacker@example.com",
+			'message' => "First line\\nSecond line",
+		);
+		$result = SCH_Email::send_contact_email( $data, array( 'recipient_email' => 'owner@example.com' ) );
+		sch_test_assert_same( true, $result, 'Email send result.' );
+		sch_test_assert_same( 'owner@example.com', $GLOBALS['sch_test_mail']['to'], 'Recipient address.' );
+		sch_test_assert_same( true, false !== strpos( $GLOBALS['sch_test_mail']['headers'][0], 'text/plain; charset=UTF-8' ), 'Plain-text content type.' );
+		sch_test_assert_same( true, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], 'visitor@example.com' ), 'Reply-To email.' );
+		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], "\\r" ), 'Reply-To header must not contain carriage returns.' );
+		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], "\\n" ), 'Reply-To header must not contain line feeds.' );
+		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['subject'], "\\nBcc:" ), 'Subject must not contain injected header lines.' );
+		sch_test_assert_same( true, false !== strpos( $GLOBALS['sch_test_mail']['message'], "First line\\nSecond line" ), 'Message line breaks are preserved.' );
 	},
 	'runs with mbstring disabled' => function () {
 		sch_test_assert_same( false, extension_loaded( 'mbstring' ), 'The test process must disable mbstring.' );
