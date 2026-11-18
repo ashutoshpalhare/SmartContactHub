@@ -142,7 +142,7 @@ $tests = array(
 		);
 		sch_test_assert_same( 'owner@example.com', $result['recipient_email'], 'Valid recipient is retained.' );
 		sch_test_assert_same( 'Contact', $result['form_title'], 'Title is sanitized.' );
-		sch_test_assert_same( 'Hello\nthere', $result['success_message'], 'Message is sanitized.' );
+		sch_test_assert_same( "Hello\nthere", $result['success_message'], 'Message is sanitized.' );
 		sch_test_assert_same( '919876543210', $result['whatsapp_number'], 'WhatsApp number is normalized.' );
 		sch_test_assert_same( 'yes', $result['enable_whatsapp'], 'WhatsApp is enabled only with a valid number.' );
 	},
