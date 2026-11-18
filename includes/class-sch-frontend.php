@@ -138,7 +138,18 @@ class SCH_Frontend {
 	 * Validate, rate-limit, and process an AJAX form submission.
 	 */
 	public static function handle_submission() {
-		if ( ! SCH_Request_Guard::has_scalar_value( wp_unslash( $_REQUEST ), self::NONCE_NAME ) || ! check_ajax_referer( self::AJAX_ACTION, self::NONCE_NAME, false ) ) {
+		if ( ! SCH_Request_Guard::is_post_request( wp_unslash( $_SERVER ) ) ) {
+			wp_send_json_error(
+				array( 'message' => __( 'This request method is not allowed.', 'smart-contact-hub' ) ),
+				405
+			);
+		}
+
+		$nonce = SCH_Request_Guard::has_scalar_value( $_POST, self::NONCE_NAME )
+			? wp_unslash( $_POST[ self::NONCE_NAME ] )
+			: '';
+
+		if ( '' === $nonce || ! wp_verify_nonce( $nonce, self::AJAX_ACTION ) ) {
 			wp_send_json_error(
 				array( 'message' => __( 'Your session has expired. Refresh the page and try again.', 'smart-contact-hub' ) ),
 				403

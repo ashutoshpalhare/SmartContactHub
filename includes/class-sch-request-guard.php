@@ -37,6 +37,16 @@ class SCH_Request_Guard {
 	}
 
 	/**
+	 * Check whether the incoming request uses the expected POST method.
+	 *
+	 * @param mixed $server Server variables.
+	 * @return bool
+	 */
+	public static function is_post_request( $server ) {
+		return is_array( $server ) && isset( $server['REQUEST_METHOD'] ) && is_string( $server['REQUEST_METHOD'] ) && 'POST' === strtoupper( $server['REQUEST_METHOD'] );
+	}
+
+	/**
 	 * Return a sanitized scalar remote address or a stable fallback.
 	 *
 	 * @param array $server Server variables.

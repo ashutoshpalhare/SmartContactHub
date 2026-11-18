@@ -244,6 +244,15 @@ $tests = array(
 	'sanitizes scalar remote addresses' => function () {
 		sch_test_assert_same( '127.0.0.1', SCH_Request_Guard::get_remote_address( array( 'REMOTE_ADDR' => '127.0.0.1' ) ), 'Scalar remote address.' );
 	},
+	'rejects non-POST request methods' => function () {
+		sch_test_assert_same( false, SCH_Request_Guard::is_post_request( array( 'REQUEST_METHOD' => 'GET' ) ), 'GET request method.' );
+		sch_test_assert_same( false, SCH_Request_Guard::is_post_request( array( 'REQUEST_METHOD' => 'PATCH' ) ), 'PATCH request method.' );
+		sch_test_assert_same( false, SCH_Request_Guard::is_post_request( array() ), 'Missing request method.' );
+	},
+	'accepts POST request methods case-insensitively' => function () {
+		sch_test_assert_same( true, SCH_Request_Guard::is_post_request( array( 'REQUEST_METHOD' => 'POST' ) ), 'POST request method.' );
+		sch_test_assert_same( true, SCH_Request_Guard::is_post_request( array( 'REQUEST_METHOD' => 'post' ) ), 'Lowercase POST request method.' );
+	},
 	'runs with mbstring disabled' => function () {
 		sch_test_assert_same( false, extension_loaded( 'mbstring' ), 'The test process must disable mbstring.' );
 	},

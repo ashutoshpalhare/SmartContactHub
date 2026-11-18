@@ -125,7 +125,9 @@
 				}
 			})
 				.then(function (response) {
-					return response.json().then(function (payload) {
+					return response.json().catch(function () {
+						throw new Error(i18n.error || 'Something went wrong. Please try again.');
+					}).then(function (payload) {
 						if (!response.ok || !payload || !payload.success) {
 							var message = payload && payload.data && payload.data.message;
 							throw new Error(message || i18n.error || 'Something went wrong. Please try again.');
