@@ -9,6 +9,7 @@
 
 define( 'ABSPATH', dirname( __DIR__ ) . '/' );
 require_once dirname( __DIR__ ) . '/includes/class-sch-compat.php';
+require_once dirname( __DIR__ ) . '/includes/class-sch-settings.php';
 /**
  * Minimal WordPress API stubs for isolated validation tests.
  */
@@ -101,6 +102,65 @@ function sch_test_assert_same( $expected, $actual, $message ) {
 }
 
 $tests = array(
+	'normalizes malformed saved settings to safe defaults' => function () {
+		$defaults = array(
+			'recipient_email' => 'admin@example.com',
+			'form_title' => 'Get in Touch',
+			'success_message' => 'Thank you!',
+			'whatsapp_number' => '',
+			'enable_whatsapp' => 'no',
+		);
+		$result = SCH_Settings::normalize(
+			array(
+				'recipient_email' => array( 'attacker@example.com' ),
+				'form_title' => (object) array( 'value' => 'Injected' ),
+				'success_message' => array( 'unexpected' ),
+				'whatsapp_number' => array( '919876543210' ),
+				'enable_whatsapp' => 'yes',
+			),
+			$defaults
+		);
+		sch_test_assert_same( $defaults, $result, 'Malformed option values must fall back safely.' );
+	},
+	'normalizes valid saved settings and strips WhatsApp formatting' => function () {
+		$defaults = array(
+			'recipient_email' => 'admin@example.com',
+			'form_title' => 'Get in Touch',
+			'success_message' => 'Thank you!',
+			'whatsapp_number' => '',
+			'enable_whatsapp' => 'no',
+		);
+		$result = SCH_Settings::normalize(
+			array(
+				'recipient_email' => 'owner@example.com',
+				'form_title' => '  <b>Contact</b>  ',
+				'success_message' => "  Hello\nthere  ",
+				'whatsapp_number' => '+91 (98765) 43210',
+				'enable_whatsapp' => 'yes',
+			),
+			$defaults
+		);
+		sch_test_assert_same( 'owner@example.com', $result['recipient_email'], 'Valid recipient is retained.' );
+		sch_test_assert_same( 'Contact', $result['form_title'], 'Title is sanitized.' );
+		sch_test_assert_same( 'Hello\nthere', $result['success_message'], 'Message is sanitized.' );
+		sch_test_assert_same( '919876543210', $result['whatsapp_number'], 'WhatsApp number is normalized.' );
+		sch_test_assert_same( 'yes', $result['enable_whatsapp'], 'WhatsApp is enabled only with a valid number.' );
+	},
+	'disables WhatsApp when the saved number is invalid' => function () {
+		$defaults = array(
+			'recipient_email' => 'admin@example.com',
+			'form_title' => 'Get in Touch',
+			'success_message' => 'Thank you!',
+			'whatsapp_number' => '',
+			'enable_whatsapp' => 'no',
+		);
+		$result = SCH_Settings::normalize(
+			array( 'whatsapp_number' => '123', 'enable_whatsapp' => 'yes' ),
+			$defaults
+		);
+		sch_test_assert_same( '', $result['whatsapp_number'], 'Invalid WhatsApp number is removed.' );
+		sch_test_assert_same( 'no', $result['enable_whatsapp'], 'WhatsApp is disabled without a valid number.' );
+	},
 	'counts ASCII characters' => function () {
 		sch_test_assert_same( 5, SCH_Compat::text_length( 'hello' ), 'ASCII length.' );
 	},

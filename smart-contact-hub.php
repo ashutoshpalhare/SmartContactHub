@@ -24,6 +24,7 @@ define( 'SCH_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SCH_OPTION_NAME', 'sch_settings' );
 
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-compat.php';
+require_once SCH_PLUGIN_DIR . 'includes/class-sch-settings.php';
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-validator.php';
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-request-guard.php';
 require_once SCH_PLUGIN_DIR . 'includes/class-sch-email.php';
@@ -37,7 +38,7 @@ require_once SCH_PLUGIN_DIR . 'includes/class-sch-frontend.php';
  */
 function sch_get_default_settings() {
 	return array(
-		'recipient_email' => sanitize_email( get_option( 'admin_email' ) ),
+		'recipient_email' => is_string( get_option( 'admin_email' ) ) ? sanitize_email( get_option( 'admin_email' ) ) : '',
 		'success_message' => __( 'Thank you! Your message has been sent successfully.', 'smart-contact-hub' ),
 		'whatsapp_number' => '',
 		'enable_whatsapp' => 'no',
@@ -53,7 +54,7 @@ function sch_get_default_settings() {
 function sch_get_settings() {
 	$saved = get_option( SCH_OPTION_NAME, array() );
 
-	return wp_parse_args( is_array( $saved ) ? $saved : array(), sch_get_default_settings() );
+	return SCH_Settings::normalize( $saved, sch_get_default_settings() );
 }
 
 /**
