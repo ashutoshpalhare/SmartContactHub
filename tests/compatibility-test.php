@@ -36,7 +36,7 @@ function __( $message, $domain = null ) {
 
 function sanitize_text_field( $value ) {
 	$value = strip_tags( $value );
-	return trim( preg_replace( '/[\\r\\n\\t ]+/', ' ', $value ) );
+	return trim( preg_replace( '/[\r\n\\t ]+/', ' ', $value ) );
 }
 
 function sanitize_textarea_field( $value ) {
@@ -287,21 +287,21 @@ $tests = array(
 	'sends a plain-text email with a validated Reply-To header' => function () {
 		$GLOBALS['sch_test_mail'] = null;
 		$data = array(
-			'name'    => "Ashutosh\\r\\nBcc: attacker@example.com",
+			'name'    => "Ashutosh\r\nBcc: attacker@example.com",
 			'email'   => 'visitor@example.com',
 			'phone'   => '',
-			'subject' => "Project\\r\\nBcc: attacker@example.com",
-			'message' => "First line\\nSecond line",
+			'subject' => "Project\r\nBcc: attacker@example.com",
+			'message' => "First line\nSecond line",
 		);
 		$result = SCH_Email::send_contact_email( $data, array( 'recipient_email' => 'owner@example.com' ) );
 		sch_test_assert_same( true, $result, 'Email send result.' );
 		sch_test_assert_same( 'owner@example.com', $GLOBALS['sch_test_mail']['to'], 'Recipient address.' );
 		sch_test_assert_same( true, false !== strpos( $GLOBALS['sch_test_mail']['headers'][0], 'text/plain; charset=UTF-8' ), 'Plain-text content type.' );
 		sch_test_assert_same( true, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], 'visitor@example.com' ), 'Reply-To email.' );
-		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], "\\r" ), 'Reply-To header must not contain carriage returns.' );
-		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], "\\n" ), 'Reply-To header must not contain line feeds.' );
-		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['subject'], "\\nBcc:" ), 'Subject must not contain injected header lines.' );
-		sch_test_assert_same( true, false !== strpos( $GLOBALS['sch_test_mail']['message'], "First line\\nSecond line" ), 'Message line breaks are preserved.' );
+		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], "\r" ), 'Reply-To header must not contain carriage returns.' );
+		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['headers'][1], "\n" ), 'Reply-To header must not contain line feeds.' );
+		sch_test_assert_same( false, false !== strpos( $GLOBALS['sch_test_mail']['subject'], "\nBcc:" ), 'Subject must not contain injected header lines.' );
+		sch_test_assert_same( true, false !== strpos( $GLOBALS['sch_test_mail']['message'], "First line\nSecond line" ), 'Message line breaks are preserved.' );
 	},
 	'runs with mbstring disabled' => function () {
 		sch_test_assert_same( false, extension_loaded( 'mbstring' ), 'The test process must disable mbstring.' );
