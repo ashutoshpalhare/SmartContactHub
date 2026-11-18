@@ -26,6 +26,17 @@ class SCH_Request_Guard {
 	}
 
 	/**
+	 * Check that a request contains a scalar value for a required key.
+	 *
+	 * @param mixed  $input Request data.
+	 * @param string $key   Expected key.
+	 * @return bool
+	 */
+	public static function has_scalar_value( $input, $key ) {
+		return is_array( $input ) && isset( $input[ $key ] ) && is_scalar( $input[ $key ] );
+	}
+
+	/**
 	 * Return a sanitized scalar remote address or a stable fallback.
 	 *
 	 * @param array $server Server variables.

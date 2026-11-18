@@ -233,6 +233,14 @@ $tests = array(
 		sch_test_assert_same( 'unknown', SCH_Request_Guard::get_remote_address( array( 'REMOTE_ADDR' => array( 'unexpected' ) ) ), 'Array remote address.' );
 		sch_test_assert_same( 'unknown', SCH_Request_Guard::get_remote_address( array() ), 'Missing remote address.' );
 	},
+	'rejects missing and non-scalar nonce request values' => function () {
+		sch_test_assert_same( false, SCH_Request_Guard::has_scalar_value( array(), 'sch_nonce' ), 'Missing nonce.' );
+		sch_test_assert_same( false, SCH_Request_Guard::has_scalar_value( array( 'sch_nonce' => array( 'bad' ) ), 'sch_nonce' ), 'Array nonce.' );
+		sch_test_assert_same( false, SCH_Request_Guard::has_scalar_value( array( 'sch_nonce' => (object) array() ), 'sch_nonce' ), 'Object nonce.' );
+	},
+	'accepts scalar nonce request values' => function () {
+		sch_test_assert_same( true, SCH_Request_Guard::has_scalar_value( array( 'sch_nonce' => 'nonce-token' ), 'sch_nonce' ), 'String nonce.' );
+	},
 	'sanitizes scalar remote addresses' => function () {
 		sch_test_assert_same( '127.0.0.1', SCH_Request_Guard::get_remote_address( array( 'REMOTE_ADDR' => '127.0.0.1' ) ), 'Scalar remote address.' );
 	},

@@ -138,7 +138,7 @@ class SCH_Frontend {
 	 * Validate, rate-limit, and process an AJAX form submission.
 	 */
 	public static function handle_submission() {
-		if ( ! check_ajax_referer( self::AJAX_ACTION, self::NONCE_NAME, false ) ) {
+		if ( ! SCH_Request_Guard::has_scalar_value( wp_unslash( $_REQUEST ), self::NONCE_NAME ) || ! check_ajax_referer( self::AJAX_ACTION, self::NONCE_NAME, false ) ) {
 			wp_send_json_error(
 				array( 'message' => __( 'Your session has expired. Refresh the page and try again.', 'smart-contact-hub' ) ),
 				403
