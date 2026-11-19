@@ -8,6 +8,14 @@
 	var i18n = config.i18n || {};
 	var ajaxUrl = config.ajaxUrl || '';
 
+	function countCharacters(value) {
+		if ('function' === typeof Array.from) {
+			return Array.from(value).length;
+		}
+
+		return value.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, '_').length;
+	}
+
 	function setStatus(element, message, type) {
 		if (!element) {
 			return;
@@ -88,10 +96,15 @@
 		var messageField = refs.form.querySelector('textarea[name="message"]');
 		if (messageField) {
 			var counter = refs.form.querySelector('.sch-character-count');
-			var maxLength = parseInt(messageField.getAttribute('maxlength'), 10) || 5000;
+			var maxLength = parseInt(messageField.getAttribute('data-maxlength'), 10) || 5000;
 			var updateCounter = function () {
+				var characters = countCharacters(messageField.value);
+				if (characters > maxLength) {
+					messageField.value = Array.from(messageField.value).slice(0, maxLength).join('');
+					characters = maxLength;
+				}
 				if (counter) {
-					counter.textContent = messageField.value.length + ' / ' + maxLength;
+					counter.textContent = characters + ' / ' + maxLength;
 				}
 			};
 			messageField.addEventListener('input', updateCounter);
@@ -110,7 +123,12 @@
 				return;
 			}
 
-			if (!ajaxUrl || refs.submitBtn.disabled) {
+			if (refs.submitBtn.disabled) {
+				return;
+			}
+
+			if (!ajaxUrl) {
+				setStatus(refs.status, i18n.error || 'Something went wrong. Please try again.', 'error');
 				return;
 			}
 
@@ -128,11 +146,14 @@
 					return response.json().catch(function () {
 						throw new Error(i18n.error || 'Something went wrong. Please try again.');
 					}).then(function (payload) {
-						if (!response.ok || !payload || !payload.success) {
+						if (!response.ok || !payload || true !== payload.success) {
 							var message = payload && payload.data && payload.data.message;
 							throw new Error(message || i18n.error || 'Something went wrong. Please try again.');
 						}
-						return payload.data || {};
+						if (!payload.data || 'object' !== typeof payload.data || Array.isArray(payload.data)) {
+							throw new Error(i18n.error || 'Something went wrong. Please try again.');
+						}
+						return payload.data;
 					});
 				})
 				.then(function (data) {

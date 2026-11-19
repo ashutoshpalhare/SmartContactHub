@@ -111,8 +111,8 @@ class SCH_Frontend {
 							</div>
 							<div class="sch-field sch-field--full">
 								<label for="<?php echo esc_attr( $uid ); ?>-message"><?php esc_html_e( 'Message', 'smart-contact-hub' ); ?> <span class="sch-required" aria-hidden="true">*</span></label>
-								<textarea id="<?php echo esc_attr( $uid ); ?>-message" name="message" rows="6" maxlength="5000" aria-required="true" required></textarea>
-								<small class="sch-character-count" aria-live="polite">0 / 5000</small>
+								<textarea id="<?php echo esc_attr( $uid ); ?>-message" name="message" rows="6" data-maxlength="5000" aria-required="true" required></textarea>
+								<small class="sch-character-count" aria-hidden="true">0 / 5000</small>
 							</div>
 							<div class="sch-field sch-field--trap" aria-hidden="true">
 								<label for="<?php echo esc_attr( $uid ); ?>-website"><?php esc_html_e( 'Leave this field empty', 'smart-contact-hub' ); ?></label>
