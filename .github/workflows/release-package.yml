@@ -1,0 +1,44 @@
+name: Build Plugin ZIP
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+
+jobs:
+  package:
+    name: Build clean WordPress plugin package
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+
+      - name: Assemble runtime files
+        shell: bash
+        run: |
+          set -euo pipefail
+          package_dir="dist/smart-contact-hub"
+          mkdir -p "$package_dir"
+          cp smart-contact-hub.php uninstall.php readme.txt LICENSE "$package_dir/"
+          cp -R includes assets "$package_dir/"
+          test -f "$package_dir/smart-contact-hub.php"
+          test -f "$package_dir/includes/class-sch-settings.php"
+          test -f "$package_dir/assets/js/frontend.js"
+          test -f "$package_dir/readme.txt"
+
+      - name: Create installable ZIP
+        run: |
+          cd dist
+          zip -qr smart-contact-hub.zip smart-contact-hub
+
+      - name: Upload plugin ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: smart-contact-hub
+          path: dist/smart-contact-hub.zip
+          if-no-files-found: error
+          retention-days: 14

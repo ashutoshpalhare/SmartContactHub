@@ -16,7 +16,7 @@ Smart Contact Hub adds a configurable contact form with the [smart_contact_hub] 
 
 * AJAX submission with accessible loading, error, and success states.
 * Email notifications through WordPress wp_mail().
-* Optional WhatsApp follow-up link after successful email delivery.
+* Optional WhatsApp follow-up link after WordPress accepts the email for processing.
 * Settings page under Settings > Smart Contact Hub.
 * Nonce verification, a honeypot field, and a short submission cooldown.
 * Server-side sanitization, validation, length limits, and safe email headers.
@@ -25,7 +25,7 @@ Smart Contact Hub adds a configurable contact form with the [smart_contact_hub] 
 
 == Installation ==
 
-1. Upload the smart-contact-hub directory to /wp-content/plugins/.
+1. Upload the smart-contact-hub.zip plugin package through Plugins > Add New > Upload Plugin, or copy the smart-contact-hub directory to /wp-content/plugins/.
 2. Activate Smart Contact Hub from the Plugins screen.
 3. Open Settings > Smart Contact Hub and configure the recipient and form options.
 4. Add [smart_contact_hub] to a page or post.
@@ -38,7 +38,7 @@ Messages are sent to the Recipient Email configured under Settings > Smart Conta
 
 = How do I enable WhatsApp follow-up? =
 
-Enter the international number with country code and digits only (8 to 15 digits), enable the WhatsApp button, and save. A follow-up link appears after email delivery succeeds. Visitors choose whether to open it.
+Enter the international number with country code and digits only (8 to 15 digits), enable the WhatsApp button, and save. A follow-up link appears after WordPress accepts the email for processing. Visitors choose whether to open it.
 
 = Does the plugin store submissions? =
 
@@ -46,7 +46,7 @@ No. The plugin sends submissions through wp_mail() and does not save them as Wor
 
 = Why are messages not arriving? =
 
-Check the recipient address and hosting mail configuration. Configure a reliable SMTP provider for production and verify inbox delivery.
+Check the recipient address and hosting mail configuration. Configure a reliable SMTP provider for production and verify inbox delivery. A successful wp_mail() return means WordPress accepted the message for processing; it does not guarantee inbox delivery.
 
 = Is the form protected against spam? =
 
@@ -61,6 +61,7 @@ The plugin includes nonce verification, a hidden honeypot, and a short per-netwo
 * Added a multibyte-safe compatibility helper that does not require mbstring.
 * Improved responsive styling, accessibility, and AJAX error handling.
 * Added live message length feedback and developer quality tooling.
+* Added a clean installable plugin ZIP workflow and clarified mail delivery behavior.
 
 = 1.0.0 =
 * Initial contact form shortcode and settings page.

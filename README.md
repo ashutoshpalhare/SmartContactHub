@@ -6,12 +6,12 @@ A lightweight WordPress contact form plugin with AJAX email delivery, optional W
 
 - **Shortcode:** add the form to any page or post with `[smart_contact_hub]`.
 - **AJAX submission:** visitors submit without a page reload and receive clear success or error feedback.
-- **Email delivery:** sends plain-text notifications through WordPress `wp_mail()`, with a validated Reply-To address.
-- **WhatsApp follow-up:** optionally show a `wa.me` link after successful email delivery.
+- **Email notifications:** sends plain-text messages through WordPress `wp_mail()`, with a validated Reply-To address.
+- **WhatsApp follow-up:** optionally show a `wa.me` link after WordPress accepts the email for processing.
 - **Settings screen:** configure the recipient, form heading, confirmation message, and WhatsApp option under **Settings → Smart Contact Hub**.
 - **Spam controls:** nonce verification, a honeypot field, and a short per-network submission cooldown.
 - **Input protection:** server-side validation, sanitization, field length limits, and safe email headers.
-- **Accessible UI:** associated labels, required-field semantics, live status announcements, keyboard focus styles, and reduced-motion support.
+- **Accessible UI:** associated labels, required-field semantics, status announcements, keyboard focus styles, and reduced-motion support.
 - **Responsive styling:** scoped CSS that avoids leaking styles into the active WordPress theme.
 - **No external runtime dependencies:** no external scripts, stylesheets, fonts, or API services are loaded.
 
@@ -23,12 +23,14 @@ A lightweight WordPress contact form plugin with AJAX email delivery, optional W
 
 ## Installation
 
-1. Download or clone this repository.
-2. Copy the plugin directory into `wp-content/plugins/smart-contact-hub/`.
-3. Activate **Smart Contact Hub** from **Plugins** in the WordPress dashboard.
+1. Download the latest plugin ZIP from the repository's **Actions → Build Plugin ZIP** workflow artifact, or download the source archive.
+2. In WordPress, open **Plugins → Add New → Upload Plugin** and upload the ZIP.
+3. Activate **Smart Contact Hub** from the Plugins screen.
 4. Open **Settings → Smart Contact Hub**.
 5. Set the recipient email and customize the form title and success message.
 6. Add `[smart_contact_hub]` to a page, post, or shortcode-enabled widget area.
+
+For a manual source installation, copy the plugin directory into `wp-content/plugins/smart-contact-hub/` and activate it from the dashboard.
 
 ## Configuration
 
@@ -36,9 +38,9 @@ A lightweight WordPress contact form plugin with AJAX email delivery, optional W
 | --- | --- |
 | Recipient Email | Destination for contact notifications. Defaults to the WordPress admin email. |
 | Form Title | Heading displayed above the form. |
-| Success Message | Confirmation shown after WordPress accepts the email. |
+| Success Message | Confirmation shown after WordPress accepts the email for processing. |
 | WhatsApp Number | International number with country code, digits only (8–15 digits). |
-| Enable WhatsApp Button | Displays a WhatsApp follow-up link after successful email delivery. |
+| Enable WhatsApp Button | Displays a WhatsApp follow-up link after WordPress accepts the email for processing. |
 
 The WhatsApp link is optional. When enabled, it opens a new tab with a short message containing the sender name and subject. The visitor must choose to open WhatsApp; the plugin does not redirect automatically.
 
@@ -62,7 +64,7 @@ The browser performs native validity checks, and the server repeats validation b
 - A short transient cooldown reduces rapid repeat submissions. Its key is an HMAC of the remote address; the raw address is not stored by this plugin.
 - Contact submissions are **not stored in the WordPress database** by this plugin. They are passed to `wp_mail()` for delivery.
 
-The honeypot and cooldown are lightweight controls, not a replacement for a dedicated anti-spam service on high-volume public forms. Configure a reliable SMTP delivery method because `wp_mail()` acceptance does not guarantee inbox delivery.
+The honeypot and cooldown are lightweight controls, not a replacement for a dedicated anti-spam service on high-volume public forms. Configure a reliable SMTP delivery method because a successful `wp_mail()` return means WordPress accepted the message for processing; it does **not** guarantee inbox delivery. Mail transport, hosting, and recipient filtering remain outside the plugin's control.
 
 ## Developer workflow
 
@@ -84,6 +86,10 @@ Run WordPress and PHP compatibility coding standards:
 composer cs
 ```
 
+The GitHub Actions quality workflow runs PHP syntax checks and dependency-free regression tests on PHP 7.4 and 8.3, plus a JavaScript syntax check. It does not boot a WordPress installation, so it is not a substitute for testing the plugin in a real WordPress site.
+
+To build a clean installable ZIP, run **Actions → Build Plugin ZIP → Run workflow**. The package contains the plugin bootstrap, runtime includes, frontend assets, uninstall handler, readme, and license; it excludes Git metadata, CI files, tests, and development dependencies. Pushing a version tag (for example, `v1.1.0`) also builds the package.
+
 The project targets WordPress 5.8+ and PHP 7.4+. The compatibility helper provides Unicode-safe character counting and slicing even when the PHP `mbstring` extension is unavailable.
 
 ## Project structure
@@ -92,26 +98,34 @@ The project targets WordPress 5.8+ and PHP 7.4+. The compatibility helper provid
 SmartContactHub/
 ├── smart-contact-hub.php
 ├── uninstall.php
+├── LICENSE
+├── README.md
+├── readme.txt
 ├── composer.json
 ├── phpcs.xml.dist
 ├── includes/
 │   ├── class-sch-admin.php
 │   ├── class-sch-compat.php
 │   ├── class-sch-email.php
-│   └── class-sch-frontend.php
+│   ├── class-sch-frontend.php
+│   ├── class-sch-request-guard.php
+│   ├── class-sch-settings.php
+│   └── class-sch-validator.php
 ├── assets/
 │   ├── css/frontend.css
 │   └── js/frontend.js
-├── .github/workflows/
-├── README.md
-└── readme.txt
+├── tests/
+│   └── compatibility-test.php
+└── .github/workflows/
+    ├── quality.yml
+    └── release-package.yml
 ```
 
 ## Troubleshooting
 
 **Messages are not arriving**
 
-Check the configured recipient address, spam folder, and hosting mail configuration. For production, configure SMTP and verify delivery independently.
+Check the configured recipient address, spam folder, and hosting mail configuration. For production, configure SMTP and verify delivery independently. A successful submission response only confirms that WordPress accepted the message for processing.
 
 **The WhatsApp button does not appear**
 
@@ -123,4 +137,4 @@ Refresh the page to obtain a fresh nonce. Aggressive page caching can serve stal
 
 ## License
 
-GPL-2.0-or-later. See [LICENSE](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
+GPL-2.0-or-later. See [LICENSE](LICENSE) for the license notice and the [GNU GPL v2 text](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html).
